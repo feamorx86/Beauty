@@ -1,153 +1,187 @@
 package com.feamor.beauty.tests;
 
 import com.feamor.beauty.dao.PageDao;
-import com.feamor.beauty.models.BlockType;
-import com.feamor.beauty.models.Page;
-import com.feamor.beauty.models.PageBlock;
-import com.feamor.beauty.models.PageType;
+import com.feamor.beauty.dao.SiteDao;
+import com.feamor.beauty.dao.UserDao;
+import com.feamor.beauty.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.List;
 
 /**
  * Created by Home on 13.02.2016.
  */
 @Transactional
-@RestController
+//@RestController
 public class TestController {
-
+/*
     @Autowired
     private PageDao pageDao;
 
-    @RequestMapping(value = "/", produces = "text/html;charset=utf-8")
-    @ResponseBody
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private SiteDao siteDao;
+
+
+//    @RequestMapping(value = "/", produces = "text/html;charset=utf-8")
+//    @ResponseBody
     String home() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("<html><meta charset=\"utf-8\"><body><h1>Список типов страниц</h1>");
+        builder.append("<html><meta charset=\"utf-8\"><body><h1>РЈСЂР°Р°Р°Р°!!!</h1>");
+        builder.append("<a href=\"web/index.htm\"><h1>РЎР°РјС‹Р№ Р°С…СѓРёС‚РµР»СЊРЅС‹Р№ СЃР°Р№С‚!!!!!</h1></a>");
 
-        List<PageType> pageTypes = pageDao.listPageTypes();
-        if (pageTypes == null || pageTypes.size() == 0) {
-            builder.append("нет ни однеого типа страниц");
-        } else {
-            builder.append("<table border=\"1\"><tr><th>Id</th><th>Alias</th><th>ClassId</th><th>Description</th></tr>");
-            for(PageType pageType : pageTypes) {
-                builder.append("<tr><td>"+pageType.getId()+"</td><td>"+pageType.getAlias()+"</td><td>"+pageType.getClassId()+"</td><td>"+pageType.getDescription()+"</td></tr>");
-            }
-            builder.append("</table>");
-        }
+//        List<Page> pages = pageDao.listPages();
+//        if (pages == null || pages.size() == 0) {
+//            builder.append("no pages");
+//        } else {
+//
+//            for(Page p : pages) {
+//                PageDom dom = pageDao.loadPage(p.getPageId());
+//                dom.print(builder);
+//            }
+//        }
         builder.append("</body><html>");
         return builder.toString();
     }
 
-    @RequestMapping(value = "/pages", produces = "text/html;charset=utf-8")
-    @ResponseBody
-    String pages() {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("<html><meta charset=\"utf-8\"><body><h1>Список Страниц</h1>");
-
-        List<Page> pages = pageDao.listPages();
-        if (pages == null || pages.size() == 0) {
-            builder.append("нет ни одной страницы");
-        } else {
-            builder.append("<table border=\"1\"><tr><th>Id</th><th>Alias</th><th>Comment</th><th>page type</th><th>Blocks count</th></tr>");
-            for(Page page : pages) {
-
-                builder.append("<tr><td>"+page.getId()+"</td><td>"+page.getAlias()+"</td><td>"+page.getComment()+"</td>");
-
-                PageType pageType = page.getPageType();
-                if (pageType != null) {
-                    builder.append("<td>"+pageType.getAlias()+"</td>");
-                } else {
-                    builder.append("<td> unknown </td>");
-                }
-
-                List<PageBlock> blocks = page.getBlocks();
-                if (blocks!= null && blocks.size()>0) {
-                    builder.append("<td>" + page.getBlocks().size() + "</td>");
-                } else {
-                    builder.append("<td>Нет блоков</td>");
-                }
-
-                builder.append("</tr>");
-            }
-            builder.append("</table>");
+    private String printLoginPage(String login, String password, String error) {
+        HTMLWriter writer = new HTMLWriter();
+        writer
+                .startPage()
+                .title("Super mega site!!!")
+                .tag("h2", "Login form");
+        if (!StringUtils.isEmpty(error)) {
+            writer.tag("h3","Error").writeln(error);
         }
-        builder.append("</body><html>");
-        return builder.toString();
+
+        writer.appendHtml("<Form method=\"POST\" action=\"login\"/>")
+                .writeln("Enter login")
+                .appendHtml("<p><input type=\"text\" name=\"login\"" + (StringUtils.isEmpty(login) ? "" : "value = \""+login+"\"")+" /></p>")
+                .writeln("Enter password")
+                .appendHtml("<p><input type=\"text\" name=\"password\"" + (StringUtils.isEmpty(password) ? "" : "value = \""+password+"\"")+" /></p>")
+                .appendHtml("<p><input type=\"submit\" name=\"Login\"/></p>")
+                .appendHtml("</Form>")
+                .endPage();
+        return writer.toString();
     }
 
-    @RequestMapping(value = "/block_types", produces = "text/html;charset=utf-8")
-    @ResponseBody
-    String blockTypes() {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("<html><meta charset=\"utf-8\"><body><h1>Список типов блоков</h1>");
-
-        List<BlockType> blockTypes = pageDao.listBlockTypes();
-        if (blockTypes == null || blockTypes.size() == 0) {
-            builder.append("нет ни одного типа блоков");
-        } else {
-            builder.append("<table border=\"1\"><tr><th>Id</th><th>Alias</th><th>ClassId</th><th>Comment</th></tr>");
-            for(BlockType blockType : blockTypes) {
-                builder.append("<tr><td>"+blockType.getId()+"</td><td>"+blockType.getAlias()+"</td><td>"+blockType.getClassId()+"</td><td>"+blockType.getDescription()+"</td></tr>");
-            }
-            builder.append("</table>");
-        }
-        builder.append("</body><html>");
-        return builder.toString();
-    }
-
-    @RequestMapping(value = "/pageBlocks", produces = "text/html;charset=utf-8")
-    @ResponseBody
-    String blocksForPage(@RequestParam(name = "page", required = false) Integer pageId) {
-        StringBuilder builder = new StringBuilder();
-
-        if (pageId != null) {
-            builder.append("<html><meta charset=\"utf-8\"><body><h1>Список блоков для страницы #" + pageId + "</h1>");
-
-            List<PageBlock> blocks = pageDao.listPageBlocks(pageId);
-            if (blocks == null || blocks.size() == 0) {
-                builder.append("нет ни одного блокоа");
+    //@RequestMapping(value = "/login", produces = "text/html;charset=utf-8")
+    public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if ("GET".equalsIgnoreCase(request.getMethod())) {
+            response.getOutputStream().print(printLoginPage(null, null, null));
+        } else if ("POST".equalsIgnoreCase(request.getMethod())) {
+            String login = request.getParameter("login");
+            String password = request.getParameter("password");
+            if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
+                response.getOutputStream().print(printLoginPage(login, password, "Please enter login and password"));
             } else {
-                builder.append("<table border=\"1\"><tr><th>Id</th><th>Block type</th><th>ClassId</th><th>Position</th></tr>");
-                for (PageBlock block : blocks) {
-                    builder.append("<tr><td>" + block.getId() + "</td><td>" + block.getBlockType().getAlias() + "</td><td>" + block.getPosition() + "</td></tr>");
+                User user = userDao.getUserForLoginAndPassword(login, password);
+                if (user == null) {
+                    response.getOutputStream().print(printLoginPage(login, password, "There is no user with such login and password. Check login and password and try again."));
+                } else {
+                    String sessionId = request.getSession(true).getId();
+                    userDao.putActiveUserSession(sessionId, user.getId());
+                    response.sendRedirect("/home");
                 }
-                builder.append("</table>");
             }
-        } else {
-            builder.append("<h1>Параметр страницы не указан</h1>");
+
         }
-        builder.append("</body><html>");
-        return builder.toString();
     }
 
-    @RequestMapping(value = "/list_blocks", produces = "text/html;charset=utf-8")
-    @ResponseBody
-    String listAllBlocks() {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("<html><meta charset=\"utf-8\"><body><h1>Список блоков</h1>");
-
-        List<PageBlock> blocks = pageDao.listPageBlocks();
-        if (blocks == null || blocks.size() == 0) {
-            builder.append("нет ни одного блокоа");
-        } else {
-            builder.append("<table border=\"1\"><tr><th>Id</th><th>Block type</th><th>ClassId</th><th>Position</th></tr>");
-            for(PageBlock block : blocks) {
-                builder.append("<tr><td>"+block.getId()+"</td><td>"+block.getBlockType().getAlias()+"</td><td>"+block.getPosition()+"</td></tr>");
-            }
-            builder.append("</table>");
+    //@RequestMapping(value = "/home", produces = "text/html;charset=utf-8")
+    public void home(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String sessionId = request.getRequestedSessionId();
+        User user = null;
+        if (!StringUtils.isEmpty(sessionId)) {
+            user = userDao.getUserForSession(sessionId);
         }
-        builder.append("</body><html>");
-        return builder.toString();
+
+        if (user != null){
+            HTMLWriter writer = new HTMLWriter();
+            writer.startPage();
+            writer.title("Welcome back!");
+            writer.tag("h2","Dear "+user.getFirstName()+" "+user.getLastName());
+            writer.endPage();
+            response.getOutputStream().print(writer.toString());
+        } else {
+            response.sendRedirect("/login");
+        }
     }
+
+//    @RequestMapping(value = "/test-async", produces = "text/html;charset=utf-8")
+//    public ResponseBodyEmitter testAsynch() {
+//        final ResponseBodyEmitter emitter = new ResponseBodyEmitter();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                emitter.send("");
+//            }
+//        }).start();
+//
+//        return emitter;
+//    }
+
+
+
+//    @RequestMapping(value = "/stream/page{pageId}", produces = "text/html;charset=utf-8")
+    public StreamingResponseBody stream(@PathVariable final int pageId, @CookieValue String sessionId) {
+        return new StreamingResponseBody() {
+
+            @Override
+            public void writeTo(OutputStream outputStream) throws IOException {
+                Writer w = new OutputStreamWriter(outputStream);
+                Page page = pageDao.getPage(pageId);
+                List<PageBlock> pageBlocks = pageDao.getBlocksOfPage(page.getPageId());
+                for (PageBlock block: pageBlocks) {
+
+                }
+                w.close();
+            }
+        };
+    }
+
+//    @RequestMapping(value = "/menu", produces = "text/html;charset=utf-8")
+//    @ResponseBody
+//    public String showMenu() {
+//
+//        List<SiteDao.MenuItemData> menu = siteDao.getGroupMenu(1,1);
+//
+//        HTMLWriter writer = new HTMLWriter();
+//
+//        writer.startPage();
+//        writer.title("Menu");
+//        for (String s : menu) {
+//            writer.ref(s, "/menu");
+//        }
+//        writer.endPage();
+//        return writer.toString();
+//    }
+
+
+//    @RequestMapping(value = "/templates/{id}", produces = "text/html;charset=utf-8")
+//    @ResponseBody
+    public String getTemplates(@PathVariable int id) {
+
+        BlockTemplate template = pageDao.getTemplate(id);
+
+        HTMLWriter writer = new HTMLWriter();
+
+        writer.title("Block template #"+id);
+        writer.writeln(template.toString());
+        return writer.toString();
+    }
+
+
+*/
 
 }

@@ -3,21 +3,20 @@ package com.feamor.beauty;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.io.File;
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * Created by Home on 13.02.2016.
  */
 @SpringBootApplication
 @ComponentScan
-@EnableAutoConfiguration
+@EnableAutoConfiguration(exclude=HibernateJpaAutoConfiguration.class)
 @EnableTransactionManagement
 public class Application {
 
