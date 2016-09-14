@@ -1,0 +1,44 @@
+<!doctype html>
+<html ng-app="appDataManager">
+<head>
+    <meta charset="utf-8">
+    <title>App data manager</title>
+    <link rel="stylesheet" href="/web/libs/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="app.css" />
+    <script src="/web/libs/angular/angular.js"></script>
+    <script src="js/manager.js"></script>
+</head>
+<body>
+
+<div ng-app="appDataManager" ng-controller="appsController" >
+    <div style="border: 1px solid #071724; padding: 5px; margin: 10px">
+        <p>Загружено: {{apps_data.types.length+", Стутус: "+apps_data.status}}</p>
+
+        <select  ng-model="selectedAppId" ng-change="selectApp(selectedAppId)">
+            <option value="">Пусто</option>
+            <option ng-repeat="app in apps_data.types" value="{{app.id}}">{{ app.type+", "+app.description}}</option>
+        </select>
+    </div>
+    <div ng-show = "isComponentsVisible" style="border: 1px solid #071724; padding: 5px; margin: 10px">
+        <p>Загружено: {{selectedApp.app_id+", status: "+selectedApp.status}}</p>
+        <p>Список комонентов:</p>
+        <ul>
+            <li ng-repeat="component in selectedApp.components">
+                <p><button ng-click="removeComponent(selectedAppId, component.id)">Х</button>{{ component.id+", "+component.type+", "+component.comment+", component: "+getComponent(component.link).description}}</p>
+
+            </li>
+        </ul>
+    </div>
+    <div ng-show="isComponentsVisible" style="border: 1px solid #071724; padding: 5px; margin: 10px">
+        <p>Добавление компонента</p>
+        <select ng-model="selectedComponentId">
+            <option value="{{null}}">Пусто</option>
+            <option ng-repeat="component in all_components.components" value="{{component.id}}">{{ component.type+", "+component.description}}</option>
+        </select>
+        <input type="text" title="Коментарий" ng-model="componentComment"/>
+        <button ng-click="addComponent(selectedComponentId, selectedAppId, componentComment)">Добавить</button>
+    </div>
+</div>
+
+</body>
+</html>

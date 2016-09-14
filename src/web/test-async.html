@@ -1,0 +1,32 @@
+<!--page template-->
+<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <link href="web/css/template_editor.css" rel="stylesheet">
+    <title>Тестирование аякса</title>
+
+    <script>
+        function testTemplate(alias, template) {
+            var request = new XMLHttpRequest();
+            request.open("POST", "/template?action=check", false );
+
+            var data = 'alias=' + encodeURIComponent(alias) +
+                    '&content=' + encodeURIComponent(template);
+
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+            request.send(data);
+
+            if (request.status != 200) {
+                alert("Error, fail to send template");
+            } else {
+                alert('result: '+request.responseText);
+            }
+        }
+
+    </script>
+</head><body>
+
+<h1 class="logo">Тест аякса</h1>
+    <input type="button" value="Проверить шаблон" onclick="testTemplate('aaa', 'asdasdas{$abc}asdasdsd')">
+</body>
+<a data-flickr-embed="true"  href="https://www.flickr.com/photos/staneastwood/23268654472/in/photolist-BsaWiN" title="SCE_5426"><img src="https://c1.staticflickr.com/6/5629/23268654472_bbb0e95d94_c.jpg" width="800" height="534" alt="SCE_5426"></a><script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"></script>
+</html>

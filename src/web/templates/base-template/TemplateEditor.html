@@ -1,0 +1,132 @@
+<!--page template-->
+<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <link href="web/css/template_editor.css" rel="stylesheet">
+    <title>${title}</title>
+</head><body>
+<h1 class="logo">${title}</h1>
+<!--menu-->
+<div class="menu"><h2>Меню</h2>
+    <ul>
+        ${menu-items}
+    </ul></div>
+${error}
+$[content}
+</body></html>
+
+<!--menu item template-->
+<li><a href="${url}">{title}</a></li>
+
+
+<!--error message template-->
+<div class="clearfix"></div>
+<div class="error">
+    <h2>${error-title}</h2>
+    <p class="error_message">${error-message}</p>
+    <a href="${error-url}"><p class="error_solution">${error-solution}</p></a>
+</div>
+
+<!--view-edit content-->
+<div class="clearfix"></div>
+<form action=${url-and-method} > <!-- "template?action=save&id=0" method="post" -->
+<div class="template">
+    <h2>Введите название шаблона</h2>
+    <input type="text" name="alias" value="${alias}" ${editeble}/>
+    <h2>Введите текст шаблона</h2>
+    <textarea name = "text" ${editeble}/>${content}</textarea>
+    <input type="submit" value="Отправить"/>
+</div>
+</form>
+
+<!--list templates template-->
+<div class="clearfix"></div>
+<div class="templates-list">
+    <table>
+    <th>Id</th><th>Alias</th>
+        ${items}
+    </table>
+</div>
+
+<!--templates list item template-->
+<tr><td>${id}</td><td><a href="${url}">${title}</a></td></tr>
+
+
+
+
+
+
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+    <!--<meta charset="UTF-8">-->
+    <!--<link href="css/template_editor.css" rel="stylesheet">-->
+    <!--<title>Template Editor</title>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<h1 class="logo">Редактор Шаблонов</h1>-->
+
+<!--<div class="clearfix"></div>-->
+<!--<div class="menu">-->
+    <!--<h2>Меню</h2>-->
+    <!--<ul>-->
+        <!--<li><a href="/template?action=new">Новый шаблон</a></li>-->
+        <!--<li><a href="/template?action=list">Список шаблонов</a></li>-->
+        <!--&lt;!&ndash;<li><a href="/template?action=save">Сохранить</a></li>&ndash;&gt;-->
+        <!--<li><a href="TemplateEditor.html">Поиск</a><input type="text"/></li>-->
+    <!--</ul>-->
+<!--</div>-->
+
+<!--<div class="clearfix"></div>-->
+<!--<div class="error">-->
+    <!--<h2>Ошибка</h2>-->
+    <!--<p class="error_message">Шаблон с указанным номером не существует!</p>-->
+    <!--<a href="TemplateEditor.html"><p class="error_solution">Возможено кто-то его уже удалил!</p></a>-->
+<!--</div>-->
+
+<!--<div class="clearfix"></div>-->
+<!--<form action="/template?action=save" method="post">-->
+    <!--<div class="template">-->
+        <!--<h2>Введите название шаблона</h2>-->
+        <!--<input type="text" name="alias"/>-->
+        <!--<h2>Введите текст шаблона</h2>-->
+        <!--<textarea name = "text" /></textarea>-->
+        <!--<input type="submit" value="Отправить"/>-->
+    <!--</div>-->
+<!--</form>-->
+
+<!--<div class="clearfix"></div>-->
+<!--<div class="templates-list">-->
+    <!--<table>-->
+        <!--<th>Id</th><th>Alias</th>-->
+        <!--<tr><td>10</td><td><a href="/template?action=view&id=0">Page with header and content</a></td></tr>-->
+        <!--<tr><td>1</td><td><a href="/template?action=view&id=1">test - more elements</a></td></tr>-->
+        <!--<tr><td>12312</td><td><a href="/template?action=view&id=2">test - more elementstest - more elementstest - more elementstest - more elementstest - more elementstest - more elementstest - more elementstest - more elementstest - more elementstest - more elementstest - more elementstest - more elementstest - more elementstest - more elementstest - more elements</a></td></tr>-->
+    <!--</table>-->
+<!--</div>-->
+
+<!--<div class="clearfix"></div>-->
+<!--<div class="menu">-->
+    <!--<h2>Меню</h2>-->
+    <!--<ul>-->
+        <!--<li><a href="/template?action=new">Новый шаблон</a></li>-->
+        <!--<li><a href="/template?action=list">Список шаблонов</a></li>-->
+        <!--&lt;!&ndash;<li><a href="/template?action=save">Сохранить</a></li>&ndash;&gt;-->
+        <!--<li><a href="TemplateEditor.html">Поиск</a><input type="text"/></li>-->
+    <!--</ul>-->
+<!--</div>-->
+
+<!--<div class="clearfix"></div>-->
+<!--<form action="/template?action=save" method="post">-->
+    <!--<div class="template">-->
+        <!--<h2>Введите название шаблона</h2>-->
+        <!--<input type="text" name="alias"/>-->
+        <!--<h2>Введите текст шаблона</h2>-->
+        <!--<textarea name = "text"/></textarea>-->
+        <!--<input type="submit" value="Отправить"/>-->
+    <!--</div>-->
+<!--</form>-->
+
+
+<!--</body>-->
+<!--</html>-->
