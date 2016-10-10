@@ -10,6 +10,7 @@ import com.feamor.beauty.blocks.templateeditor.*;
 import com.feamor.beauty.controllers.*;
 import com.feamor.beauty.controllers.mobileapp.AppStartDataManager;
 import com.feamor.beauty.controllers.mobileapp.AuthorizationScreenController;
+import com.feamor.beauty.controllers.mobileapp.MainMenuManager;
 import com.feamor.beauty.controllers.mobileapp.MainScreenController;
 import com.feamor.beauty.dao.*;
 import com.feamor.beauty.managers.ControlsManager;
@@ -17,8 +18,9 @@ import com.feamor.beauty.managers.RequestManager;
 import com.feamor.beauty.models.db.*;
 import com.feamor.beauty.pages.BasePageControl;
 import com.feamor.beauty.pages.PageWithTemplateControl;
-import com.feamor.beauty.views.AppStartDataJsonView;
+import com.feamor.beauty.views.mobileapp.AppStartDataJsonView;
 import com.feamor.beauty.views.ViewFactory;
+import com.feamor.beauty.views.mobileapp.MainMenuManagerJsonView;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.hibernate.SessionFactory;
@@ -139,6 +141,10 @@ public class Config extends WebMvcConfigurerAdapter {
         registry
             .addResourceHandler("/web/**")
             .addResourceLocations("file:./src/web/");
+        registry
+            .addResourceHandler("/favicon.ico")
+            .addResourceLocations("file:./src/favicon.ico");
+
     }
 
     @Override
@@ -239,6 +245,10 @@ public class Config extends WebMvcConfigurerAdapter {
         return new MainScreenController();
     }
 
+    @Bean
+    public MainMenuManager mainMenuManager() {
+        return new MainMenuManager();
+    }
 
     //------------------------------------------------
     //  Page controls
@@ -325,6 +335,11 @@ public class Config extends WebMvcConfigurerAdapter {
     @Bean
     public AppStartDataJsonView appStartDataJsonView() {
         return new AppStartDataJsonView();
+    }
+
+    @Bean
+    public MainMenuManagerJsonView mainMenuManagerJsonView() {
+        return new MainMenuManagerJsonView();
     }
 
 //    @Bean

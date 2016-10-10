@@ -50,7 +50,7 @@ public class RequestManager {
 
     public static class MappingInfo {
         public BaseController controller;
-        public Integer dbId;
+        public Integer dataId;
         public String path;
         public String bean;
         public String method;
@@ -83,7 +83,7 @@ public class RequestManager {
         }
     }
 
-    public MappingInfo registerMapping(Integer id, String path, String bean, BaseController controller, String method, String produces) throws NoSuchMethodException {
+    public MappingInfo registerMapping(Integer dataId, String path, String bean, BaseController controller, String method, String produces) throws NoSuchMethodException {
         if (produces == null) produces = "text/html; charset=utf-8";
         RequestMappingInfo requestMappingInfo = new RequestMappingInfo(bean+"_mapping", new PatternsRequestCondition(path), null,
                 null, null, null,
@@ -91,7 +91,7 @@ public class RequestManager {
         MappingInfo info = new MappingInfo();
         info.controller = controller;
         info.path = path;
-        info.dbId = id;
+        info.dataId = dataId;
         info.bean = bean;
         info.method = method;
         info.mappingInfo = requestMappingInfo;
@@ -100,9 +100,9 @@ public class RequestManager {
         return info;
     }
 
-    public MappingInfo getMappingWithId(int dbId) {
+    public MappingInfo getMappingWithId(int dataId) {
         for(MappingInfo info : mappings.values()) {
-            if (info.dbId != null && info.dbId == dbId) {
+            if (info.dataId != null && info.dataId == dataId) {
                 return  info;
             }
         }

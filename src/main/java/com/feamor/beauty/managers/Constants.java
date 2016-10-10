@@ -84,6 +84,30 @@ public class Constants {
         public static final int MOBILE_APP_EMPLOYER_COMPONENTS_ROOT = 5711;
         public static final int MOBILE_APP_DIRECTOR_COMPONENTS_ROOT = 5712;
         public static final int MOBILE_APP_ADMIN_COMPONENTS_ROOT = 5713;
+
+        public static class MobileAppMenuSetup {
+            public static final int TYPE_TYPES = 5800;
+            public static final int TYPE_STYLE = 5801;
+            public static final int TYPE_ITEM = 5802;
+
+            public static final int TYPE_TYPES_ROOT = 5803;
+            public static final int TYPE_STYLES_ROOT = 5804;
+        }
+
+        public static class MobileAppMenuItemTypes {
+            public static final int TYPE_HEADER_LABEL = 5811;
+            public static final int TYPE_HEADER_IMAGE = 5812;
+            public static final int TYPE_HEADER_COMPANY = 5813;
+            public static final int TYPE_HEADER_CLIENT = 5814;
+
+            public static final int TYPE_ITEM_TEXT = 5830;
+            public static final int TYPE_ITEM_ICON_TEXT = 5831;
+            public static final int TYPE_ITEM_IMAGE = 5842;
+
+            public static final int TYPE_DELIMITER_LINE = 5850;
+            public static final int TYPE_DELIMITER_SPACE = 5851;
+        }
+
     }
 
     public static class Controllers {
@@ -99,6 +123,7 @@ public class Constants {
         public static final int MOBILE_APP_START_DATA = 8;
         public static final int MOBILE_AUTHORIZATION_SCREEN = 9;
         public static final int MOBILE_MAIN_SCREEN = 10;
+        public static final int MOBILE_MAIN_MENU = 11;
 
     }
 

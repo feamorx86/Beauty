@@ -1,4 +1,4 @@
-package com.feamor.beauty.views;
+package com.feamor.beauty.views.mobileapp;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -7,6 +7,9 @@ import com.feamor.beauty.controllers.BaseController;
 import com.feamor.beauty.controllers.mobileapp.AppStartDataManager;
 import com.feamor.beauty.managers.Constants;
 import com.feamor.beauty.models.db.UserGroupData;
+import com.feamor.beauty.views.BaseViewRender;
+import com.feamor.beauty.views.SimpleJsonView;
+import com.feamor.beauty.views.ViewFactory;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,11 +20,7 @@ import java.util.List;
 /**
  * Created by Home on 07.09.2016.
  */
-public class AppStartDataJsonView extends BaseViewRender {
-    @Override
-    public int getFormat() {
-        return ViewFactory.RenderFormats.FORMAT_JSON;
-    }
+public class AppStartDataJsonView extends SimpleJsonView {
 
     @Override
     public Class getSupportedClass() {
@@ -66,21 +65,6 @@ public class AppStartDataJsonView extends BaseViewRender {
                 sendProblem(response, AppStartDataManager.ResultCode.ERROR_UNKNOWN_RENDER_TYPE, Integer.toString(type), "Unknown or unsupported render type");
                 break;
         }
-    }
-
-    private void sendProblem(HttpServletResponse response, int errorCode, String data, String message) throws IOException {
-        ObjectNode json = JsonNodeFactory.instance.objectNode();
-        json
-                .put("status", "error")
-                .put("error_code", errorCode);
-        if (!StringUtils.isEmpty(data)) {
-            json.put("error_data", data.toString());
-        }
-        if (!StringUtils.isEmpty(message)) {
-            json.put("error_message", message);
-        }
-        response.setContentType(ViewFactory.RenderFormats.ContentType_JSON);
-        response.getOutputStream().print(json.toString());
     }
 
     private void checkAppVersionResult(HttpServletResponse response, String status) throws IOException {
@@ -182,17 +166,6 @@ public class AppStartDataJsonView extends BaseViewRender {
         response.getOutputStream().print(json.toString());
     }
 
-//    private void onUpdateComponentForApp(HttpServletResponse response, int componentId, int componentType, String componentDescription, int appTypeParentId, int userId) throws IOException {
-//        ObjectNode json = JsonNodeFactory.instance.objectNode();
-//        json.put("status", "success");
-//        json.put("app_id", appTypeParentId);
-//        json.put("component_id", componentId);
-//        json.put("component_type", componentType);
-//        json.put("user_id", userId);
-//        json.put("component_description", componentDescription);
-//        response.setContentType("application/json");
-//        response.getOutputStream().print(json.toString());
-//    }
     private void onRemoveComponentOfApp(HttpServletResponse response, int appTypeParentId, int componentId, int userId) throws IOException {
         ObjectNode json = JsonNodeFactory.instance.objectNode();
         json.put("status", "success");

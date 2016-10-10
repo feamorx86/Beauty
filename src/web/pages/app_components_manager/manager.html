@@ -24,7 +24,10 @@
         <p>Список комонентов:</p>
         <ul>
             <li ng-repeat="component in selectedApp.components">
-                <p><button ng-click="removeComponent(selectedAppId, component.id)">Х</button>{{ component.id+", "+component.type+", "+component.comment+", component: "+getComponent(component.link).description}}</p>
+                <p>
+                    <button ng-click="removeComponent(selectedAppId, component.id)">Х</button>
+                    <a href="{{'/mobile/appdata?format=json&action=open_editor&app_id='+selectedApp.app_id+'&component_id='+component.id }}"><button>...</button></a>
+                    {{ component.id+", "+component.type+", "+component.comment+", component: "+getComponent(component.link).description}}</p>
 
             </li>
         </ul>

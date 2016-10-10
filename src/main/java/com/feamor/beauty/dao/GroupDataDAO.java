@@ -35,13 +35,30 @@ public class GroupDataDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
+    public UserGroupData getById(int dataId) {
+        CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
+        CriteriaQuery<UserGroupData> query = builder.createQuery(UserGroupData.class);
+        Root<UserGroupData> root = query.from(UserGroupData.class);
+        query = query.select(root).where(
+            builder.and(
+                builder.equal(root.get("dataId"), dataId)),
+                builder.or(
+                    builder.isNull(root.get("removed")),
+                    builder.equal(root.get("removed"), Boolean.FALSE)
+                )
+            );
+        UserGroupData result = sessionFactory.getCurrentSession().createQuery(query).uniqueResult();
+        return result;
+    }
+
     public UserGroupData firstGroupDataOfType(int type) {
         CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<UserGroupData> query = builder.createQuery(UserGroupData.class);
         Root<UserGroupData> root = query.from(UserGroupData.class);
         query = query.select(root).where(builder.equal(root.get("type"), type));
-        UserGroupData data = sessionFactory.getCurrentSession().createQuery(query).setMaxResults(1).getSingleResult();
-        return data;
+        List<UserGroupData> data = sessionFactory.getCurrentSession().createQuery(query).setMaxResults(1).list();
+        UserGroupData result = data.size() > 0 ? data.get(0) : null;
+        return result;
     }
 
     public List<UserGroupData> getChildOfGroupData(int parentId, boolean withDeleted, String ...orders) {
@@ -75,8 +92,8 @@ public class GroupDataDAO {
         return data;
     }
 
-    public void add(UserGroupData data) {
-        add(null, data.getType(), data.getUserCreatorId(), data.getParentId(), data.getIntValue(), data.getStrValue(), data.getDateValue(), data.getTextValue(), null);
+    public int add(UserGroupData data) {
+        return add(null, data.getType(), data.getUserCreatorId(), data.getParentId(), data.getIntValue(), data.getStrValue(), data.getDateValue(), data.getTextValue(), null);
     }
 
 

@@ -89,9 +89,9 @@ public class PageMappingEditor extends BaseController {
                 }
             }
             RequestManager.MappingInfo mapping = requestManager.registerMapping(dbId, path, bean, controller, "handleRequest", null);
-            mapping.dbId = pageDao.savePageMapping(dbId, 1, controller.controllerId(), path, null);
+            mapping.dataId = pageDao.savePageMapping(dbId, 1, controller.controllerId(), path, null);
 
-            writer.writeln("Mapping added for bean : " + bean + ", path : " + path + ", and saved, mappingId:" + mapping.dbId);
+            writer.writeln("Mapping added for bean : " + bean + ", path : " + path + ", and saved, mappingId:" + mapping.dataId);
         }
         writer.ref("list", request.getServletPath());
         writer.endPage();
@@ -115,7 +115,7 @@ public class PageMappingEditor extends BaseController {
             id++;
 
             optionNames[id] = mappingInfo.bean+", "+Integer.toString(mappingInfo.controller.controllerId())+", "+mappingInfo.controller.getClass().getSimpleName()+", "+mappingInfo.path;
-            optionValues[id] = Integer.toString(mappingInfo.dbId);
+            optionValues[id] = Integer.toString(mappingInfo.dataId);
         }
         writer.endTable();
         writer

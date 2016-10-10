@@ -52,7 +52,7 @@ app.controller('appsController', function ($scope, $http) {
 
     $scope.addComponent = function(selectedComponentId, appId, componentComment){
         if (appId && selectedComponentId) {
-            component = $scope.getComponent(selectedComponentId);
+            var component = $scope.getComponent(selectedComponentId);
             if (component) {
                 $http.get('/mobile/appdata?format=json&action=add_app_component&app_id=' + appId + '&component_type=' + component.type + '&component_comment=' + componentComment + '&component_link=' + component.id)
                     .then(function (responce) {
@@ -63,6 +63,5 @@ app.controller('appsController', function ($scope, $http) {
             }
         }
     };
-
 });
 

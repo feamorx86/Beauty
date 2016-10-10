@@ -1,0 +1,118 @@
+<!doctype html>
+<html ng-app="appMenuEditor">
+<head>
+    <meta charset="utf-8">
+    <title>App menu editor</title>
+    <link rel="stylesheet" href="/web/libs/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="app.css" />
+    <script src="/web/libs/angular/angular.js"></script>
+    <script src="js/menu_editor.js"></script>
+    <base href="/">
+</head>
+<body>
+
+<div ng-app="appMenuEditor" ng-controller="menuEditor" >
+    <div style="border: 1px solid #071724; padding: 5px; margin: 10px">
+        <h1>Редактор меню</h1>
+        <p>компонент меню id : {{ componentId }}</p>
+        <h2>Редактор типов меню</h2>
+        <label><input type="checkbox" ng-model="showMenuItemTypesEditor"> Включить редактор</label>
+        <div ng-show="showMenuItemTypesEditor">
+
+            <select
+                    ng-model="selectedMenuItemType"
+                    ng-options="itemType as 'id : '+itemType.id+', type : '+itemType.type+', name : '+itemType.name for itemType in menuItemTypes track by itemType.id"/>
+                <option value="">Пусто</option>
+            </select>
+
+
+            <div ng-show="selectedMenuItemType" style="border: 1px solid #071724; padding: 5px; margin: 10px">
+                <p>{{ 'id : '+selectedMenuItemType.id + ', type : ' + selectedMenuItemType.type}}</p>
+                <label>Описание <input type="text" ng-model="selectedMenuItemType.name"/></label>
+                <button ng-click="editMenuType(selectedMenuItemType.id, selectedMenuItemType.type, selectedMenuItemType.name)">Сохранить</button>
+            </div>
+        </div>
+
+        <h2>Редактор стилей</h2>
+        <label><input type="checkbox" ng-model="showMenuItemStylesEditor"> Включить редактор</label>
+        <div ng-show="showMenuItemStylesEditor">
+            <select
+                    ng-model="selectedMenuStyle"
+                    ng-options="itemStyle as 'id : '+itemStyle.id+', type : '+itemStyle.type+', params : '+itemStyle.params for itemStyle in menuItemStyles track by itemStyle.id"/>
+                <option value="">Пусто</option>
+            </select>
+
+            <div ng-show="selectedMenuStyle" style="border: 1px solid #071724; padding: 5px; margin: 10px">
+                <h3>Изменить стиль</h3>
+                <p>{{ 'id : ' + selectedMenuStyle.id}}</p>
+
+                <select
+                        ng-model="selectedMenuStyle.type"
+                        ng-options="itemType.type as itemType.type+', '+itemType.name for itemType in menuItemTypes"/>
+                </select>
+
+                <p>Параметры</p>
+                <textarea ng-model="selectedMenuStyle.params"></textarea>
+                <p>
+                <button ng-click="editMenuItemStyle(selectedMenuStyle.id, selectedMenuStyle.type, selectedMenuStyle.params)">Сохранить</button>
+                <button ng-click="removeMenuItemStyle(selectedMenuStyle.id)">Удалить</button>
+                </p>
+            </div>
+
+            <div style="border: 1px solid #071724; padding: 5px; margin: 10px">
+                <h3>Создать стиль</h3>
+                <p>Стиль для типа: {{newMenuStyleId}}</p>
+                <select
+                        ng-model="newMenuStyleTypeId"
+                        ng-options="itemType.type as itemType.type+', '+itemType.name for itemType in menuItemTypes track by itemType.id"/>
+                </select>
+                <p>Параметры</p>
+                <textarea ng-model="newMenuStyleParams"></textarea>
+                <button ng-click="addMenuItemStyle(newMenuStyleTypeId, newMenuStyleParams)">Создать</button>
+            </div>
+        </div>
+
+        <h2>Редактор Меню</h2>
+        <label><input type="checkbox" ng-model="showMenuItemsEditor">Включить редактор</label>
+        <div ng-show="showMenuItemsEditor">
+            <select
+                    ng-model="selectedMenuItem"
+                    ng-options="item as 'id : '+item.id+', type : '+item.type+', config : '+item.config for item in menuItems track by item.id"/>
+            <option value="">Пусто</option>
+            </select>
+
+            <div ng-show="selectedMenuItem" style="border: 1px solid #071724; padding: 5px; margin: 10px">
+                <h3>Изменить пункт меню</h3>
+                <p>{{ 'id : ' + selectedMenuItem.id}}</p>
+
+                <select
+                        ng-model="selectedMenuItem.type"
+                        ng-options="itemType.type as itemType.type+', '+itemType.name for itemType in menuItemTypes"/>
+                </select>
+
+                <p>Конфигурация</p>
+                <textarea ng-model="selectedMenuItem.config"></textarea>
+                <p>
+                    <button ng-click="editMenuItem(selectedMenuItem.id, selectedMenuItem.type, selectedMenuItem.config)">Сохранить</button>
+                    <button ng-click="removeMenuItem(selectedMenuItem.id)">Удалить</button>
+                </p>
+            </div>
+
+            <div style="border: 1px solid #071724; padding: 5px; margin: 10px">
+                <h3>Создать пункт меню</h3>
+                <p>Тип элемента: {{newMenuItemTypeId}}</p>
+                <select
+                        ng-model="newMenuItemTypeId"
+                        ng-options="itemType.type as itemType.type+', '+itemType.name for itemType in menuItemTypes track by itemType.id"/>
+                </select>
+                <p>Конфигурация</p>
+                <textarea ng-model="newMenuItemConfig"></textarea>
+                <button ng-click="addMenuItem(newMenuItemTypeId, newMenuItemConfig)">Создать</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

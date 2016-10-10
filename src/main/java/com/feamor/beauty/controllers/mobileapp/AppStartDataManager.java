@@ -73,6 +73,8 @@ public class AppStartDataManager extends BaseController {
     @Autowired
     private ViewFactory viewFactory;
 
+    ComponentEditorUrlProvider editorUrlProvider = new ComponentEditorUrlProvider();
+
     /**
      * actions:
      * 1. check_version (int version_code) - check does client app version are supported.
@@ -171,6 +173,16 @@ public class AppStartDataManager extends BaseController {
 
                         }
                         break;
+                        case "open_editor":{
+                            Integer appId = getParameter("app_id", request);
+                            Integer componentId = getParameter("component_id", request);
+                            if (checkNotNull(appId, componentId)) {
+                                openEditorFor(render, request, response, appId, componentId, user);
+                            } else {
+                                sendProblem(render, request, response, ResultCode.ERROR_INVALID_ARGUMENTS, action, "Invalid arguments");
+                            }
+                        }
+                        break;
                         default:
                             sendProblem(render, request, response, ResultCode.ERROR_NOT_SUPPORTED_ACTION, action, "This action does not supported.");
                             break;
@@ -181,6 +193,26 @@ public class AppStartDataManager extends BaseController {
             }
         }
         return null;
+    }
+
+    private void openEditorFor(BaseViewRender render, HttpServletRequest request, HttpServletResponse response, int appId, int componentId, User user) throws IOException {
+        if (!checkUserAccessLevel(user, 0)) {
+            sendProblem(render, request, response, ResultCode.ERROR_NOT_ALLOWED_FOR_USER, "0", "Access denied");
+        } else {
+            //groupDataDAO.update(componentId, componentType, user.getId(), appTypeParentId, linkedId, componentComment, null, null, null);
+            UserGroupData component = groupDataDAO.getById(componentId);
+            if (component == null || component.getParentId() == appId) {
+                String url = editorUrlProvider.getUrl(component.getType());
+                if (StringUtils.isEmpty(url)) {
+                    sendProblem(render, request, response, ResultCode.INVALID_DATA, null, "Can't find editor for such type of component : "+component.getType());
+                } else {
+                    url = String.format(url, componentId);
+                    response.sendRedirect(url);
+                }
+            } else {
+                sendProblem(render, request, response, ResultCode.INVALID_DATA, null, "Can't find component with id : "+componentId+"for app : "+appId);
+            }
+        }
     }
 
     private void sendProblem(BaseViewRender render, HttpServletRequest request, HttpServletResponse response, int errorCode, String data, String message) throws IOException {
@@ -306,6 +338,21 @@ public class AppStartDataManager extends BaseController {
             } else {
                 sendProblem(render, request, response, ResultCode.INVALID_DATA, Integer.toString(componentId), "No component with such id");
             }
+        }
+    }
+
+    public static class ComponentEditorUrlProvider {
+        private HashMap<Integer, String> urls = new HashMap<>();
+        public ComponentEditorUrlProvider() {
+            initialize();
+        }
+
+        public String getUrl(int componentType) {
+            return urls.get(componentType);
+        }
+
+        private void initialize() {
+            urls.put(Constants.GroupDataType.MobileAppCommonComponents.CLIENT_MAIN_MENU, "/web/pages/app_components_manager/menu_editor.html?component_id=%d");
         }
     }
 }
