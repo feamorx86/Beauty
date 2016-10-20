@@ -124,6 +124,7 @@ public class Constants {
         public static final int MOBILE_AUTHORIZATION_SCREEN = 9;
         public static final int MOBILE_MAIN_SCREEN = 10;
         public static final int MOBILE_MAIN_MENU = 11;
+        public static final int MOBILE_NEWS = 12;
 
     }
 
@@ -215,12 +216,29 @@ public class Constants {
     }
 
     public static class PageData {
+
         public static class News {
             public static final int TITLE = 100;
             public static final int SUMMARY = 101;
             public static final int ICON = 102;
             public static final int SUMMARY_BLOCK_ID = 103;
+            public static final int SUMMARY_ROOT = 110;
         }
+
+        public static class CommonPageData {
+            //date -> data of creation, int - userId,
+            public static final int CREATION_INFO = 205;
+        }
+
+        public static class NewsSummaryType {
+            public static final int BASE = 0;
+            public static final int SummaryWithHtml = 1;
+            public static final int SummaryWithImage = 2;
+            public static final int SummaryWithText = 3;
+            public static final int ComplexSummary = 4;
+
+        }
+
     }
 
     public static class UserDataTypes {

@@ -4,6 +4,7 @@ import com.feamor.beauty.managers.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.json.JsonParser;
+import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -104,7 +105,7 @@ public class Texts {
     }
 
     public void addLanguage(String json) {
-        JsonParser parser = new JacksonJsonParser();
+        JsonParser parser = JsonParserFactory.getJsonParser();
         Map<String, Object> data = parser.parseMap(json);
         String lang = (String) data.get("lang");
         Map<String, Object> objects = (Map<String, Object>) data.get("objects");

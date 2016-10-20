@@ -17,10 +17,13 @@ public class PageData {
     private int dataId;
 
     @Column(name = "\"version\"", updatable = false, insertable = false)
-    private int bersion;
+    private int version;
 
     @Column(name = "\"pageId\"", updatable = false, insertable = false)
     private int pageId;
+
+    @Column(name = "\"parentId\"", updatable = false, insertable = false)
+    private Integer parentId;
 
     @Column(name = "\"type\"", nullable = false, updatable = false, insertable = false)
     private int type;
@@ -36,6 +39,13 @@ public class PageData {
 
     @Column(name = "\"floatValue\"", updatable = false, insertable = false)
     private Double doubleValue;
+
+    @Column(name = "\"dateValue\"", updatable = false, insertable = false)
+    private Date dateValue;
+
+    @Column(name = "\"removed\"", updatable = false, insertable = false)
+    private Boolean removed;
+
 
     public int getId() {
         return id;
@@ -53,12 +63,12 @@ public class PageData {
         this.dataId = dataId;
     }
 
-    public int getBersion() {
-        return bersion;
+    public int getVersion() {
+        return version;
     }
 
-    public void setBersion(int bersion) {
-        this.bersion = bersion;
+    public void setVersion(int bersion) {
+        this.version = bersion;
     }
 
     public int getPageId() {
@@ -107,5 +117,29 @@ public class PageData {
 
     public void setDoubleValue(Double doubleValue) {
         this.doubleValue = doubleValue;
+    }
+
+    public Date getDateValue() {
+        return dateValue;
+    }
+
+    public void setDateValue(Date dateValue) {
+        this.dateValue = dateValue;
+    }
+
+    public Boolean getRemoved() {
+        return removed;
+    }
+
+    public void setRemoved(Boolean removed) {
+        this.removed = removed;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
     }
 }

@@ -93,7 +93,9 @@ public class GroupDataDAO {
     }
 
     public int add(UserGroupData data) {
-        return add(null, data.getType(), data.getUserCreatorId(), data.getParentId(), data.getIntValue(), data.getStrValue(), data.getDateValue(), data.getTextValue(), null);
+        int id = add(null, data.getType(), data.getUserCreatorId(), data.getParentId(), data.getIntValue(), data.getStrValue(), data.getDateValue(), data.getTextValue(), data.getRemoved());
+        data.setDataId(id);
+        return id;
     }
 
 
@@ -145,8 +147,8 @@ public class GroupDataDAO {
         param = call.registerParameter(2, Boolean.class, ParameterMode.IN);
         param.enablePassingNulls(true);
         param.bindValue(remove);
-        Integer newDataId = (Integer) ((ResultSetOutput)call.getOutputs().getCurrent()).getSingleResult();
-        return newDataId.intValue();
+        Integer rowId = (Integer) ((ResultSetOutput)call.getOutputs().getCurrent()).getSingleResult();
+        return rowId;
     }
 
     public boolean delete(UserGroupData data) {

@@ -100,7 +100,7 @@ public class SiteDao {
         //Page page = (Page) sessionFactory.getCurrentSession().cricreateCriteria(Page.class).add(Restrictions.eq("pageId",out.getId())).uniqueResult();
         if (page != null) {
             if (page.getType() == Constants.Pages.NEWS_CREATED_BY_USER) {
-                List<PageData> summaryData = pageDao.getDataOfPage(page.getPageId());
+                List<PageData> summaryData = pageDao.getPageData(page.getPageId());
                 if (summaryData != null) {
                     for (PageData data : summaryData) {
                         switch(data.getType()) {

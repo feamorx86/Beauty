@@ -1,24 +1,33 @@
 package com.feamor.beauty.dao;
 
 import com.feamor.beauty.managers.Constants;
+import com.feamor.beauty.models.NewsData;
 import com.feamor.beauty.models.db.*;
 import com.feamor.beauty.models.ui.PageDom;
 import com.feamor.beauty.models.ui.PageDomBlock;
 import com.feamor.beauty.templates.TemplateElement;
+import com.feamor.beauty.utils.CachedData;
+import com.feamor.beauty.utils.DataCache;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.procedure.ParameterRegistration;
+import org.hibernate.procedure.ProcedureCall;
 import org.hibernate.query.NativeQuery;
+import org.hibernate.result.ResultSetOutput;
 import org.hibernate.type.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.ParameterMode;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.*;
 
@@ -145,19 +154,72 @@ public class PageDao {
         CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<PageBlockData> query = builder.createQuery(PageBlockData.class);
         Root<PageBlockData> root = query.from(PageBlockData.class);
-        query = query.select(root).where(builder.equal(root.get("blockId"), blockId)).orderBy(builder.asc(root.get("position")));
+        query = query.select(root).where(
+                builder.and(
+                        builder.equal(root.get("blockId"), blockId),
+                        builder.or(builder.isNull(root.get("removed")), builder.equal(root.get("removed"), false)))
+
+        ).orderBy(builder.asc(root.get("position")));
         List<PageBlockData> result = sessionFactory.getCurrentSession().createQuery(query).list();
         return result;
     }
 
-    public List<PageData> getDataOfPage(int pageId) {
+    public List<PageData> getPageDataForPage(int pageId) {
         CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<PageData> query = builder.createQuery(PageData.class);
         Root<PageData> root = query.from(PageData.class);
-        query = query.select(root).where(builder.equal(root.get("pageId"), pageId));
+        query = query.select(root).where(
+                builder.and(
+                        builder.equal(root.get("pageId"), pageId),
+                        builder.or(builder.isNull(root.get("removed")), builder.equal(root.get("removed"), false))
+                ));
         List<PageData> result = sessionFactory.getCurrentSession().createQuery(query).list();
         return result;
     }
+
+    public PageData getPageData(int dataId) {
+        CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
+        CriteriaQuery<PageData> query = builder.createQuery(PageData.class);
+        Root<PageData> root = query.from(PageData.class);
+        query = query.select(root).where(
+                builder.and(
+                    builder.equal(root.get("dataId"), dataId),
+                    builder.or(builder.isNull(root.get("removed")), builder.equal(root.get("removed"), false))
+                ));
+        PageData result = sessionFactory.getCurrentSession().createQuery(query).uniqueResult();
+        return result;
+    }
+
+    public List<PageData> getPageDataOfType(int pageId, int withType) {
+        CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
+        CriteriaQuery<PageData> query = builder.createQuery(PageData.class);
+        Root<PageData> root = query.from(PageData.class);
+        query = query.select(root).where(
+                builder.and(
+                        builder.equal(root.get("pageId"), pageId),
+                        builder.and(
+                                builder.equal(root.get("type"), withType),
+                                builder.or(builder.isNull(root.get("removed")), builder.equal(root.get("removed"), false)))
+                ));
+        List<PageData> result = sessionFactory.getCurrentSession().createQuery(query).list();
+        return result;
+    }
+
+    public PageData getFirstPageDataOfType(int pageId, int withType) {
+        CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
+        CriteriaQuery<PageData> query = builder.createQuery(PageData.class);
+        Root<PageData> root = query.from(PageData.class);
+        query = query.select(root).where(
+                builder.and(
+                        builder.equal(root.get("pageId"), pageId),
+                        builder.and(
+                            builder.equal(root.get("type"), withType),
+                            builder.or(builder.isNull(root.get("removed")), builder.equal(root.get("removed"), false)))
+                ));
+        PageData result = sessionFactory.getCurrentSession().createQuery(query).setMaxResults(1).uniqueResult();
+        return result;
+    }
+
 
     public PageBlockData getPageBlockData(int id) {
         CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
@@ -177,30 +239,37 @@ public class PageDao {
         return result;
     }
 
-    public PageDom loadPageData(Page page) {
-        if (page != null) {
-            PageDom dom = new PageDom();
-            dom.setPage(page);
-            List<PageBlock> blocks = getBlocksOfPage(page.getPageId());
-            if (blocks != null) {
-                HashMap<Integer, PageDomBlock> pageDomBlocks = new HashMap<Integer, PageDomBlock>();
-                for (PageBlock block : blocks) {
-                    PageDomBlock domBlock = new PageDomBlock();
-                    domBlock.setBlock(block);
-                    domBlock.setPage(dom);
-                    pageDomBlocks.put(domBlock.getBlock().getBlockId(), domBlock);
-                }
-                dom.setBlocks(pageDomBlocks);
+    public void loadPageBlocksData(PageDom dom) {
+        List<PageBlock> blocks = getBlocksOfPage(dom.getPage().getPageId());
+        if (blocks != null) {
+            HashMap<Integer, PageDomBlock> pageDomBlocks = new HashMap<Integer, PageDomBlock>();
+            ArrayList<PageDomBlock> pageDomBlocksList = new ArrayList<>();
+            for (PageBlock block : blocks) {
+                PageDomBlock domBlock = new PageDomBlock();
+                domBlock.setBlock(block);
+                domBlock.setPage(dom);
+                pageDomBlocksList.add(domBlock);
+                pageDomBlocks.put(domBlock.getBlock().getBlockId(), domBlock);
             }
-            return dom;
-        } else {
-            return null;
+            dom.setBlocks(pageDomBlocks);
+            dom.setBlocksList(pageDomBlocksList);
         }
     }
 
-    public PageDom loadPage(int id) {
+    public PageDom loadPage(int id, boolean loadPageData, boolean loadPageBlocks) {
+        PageDom dom = null;
         Page page = getPage(id);
-        PageDom dom = loadPageData(page);
+        if (page != null) {
+            dom = new PageDom();
+            dom.setPage(page);
+            if (loadPageData) {
+                List<PageData> data = getPageDataForPage(id);
+                dom.setPageData(data);
+            }
+            if (loadPageBlocks) {
+                loadPageBlocksData(dom);
+            }
+        }
         return  dom;
     }
 
@@ -370,5 +439,222 @@ public class PageDao {
         }
         return result;
     }*/
+
+    public int addPage(Page page) {
+        int id = addPage(null, page.getType(), page.getClassId(), page.getAlias(), page.getPath(), page.getTemplate(), page.getRemoved());
+        page.setPageId(id);
+        return id;
+    }
+
+    public int addPage(Integer pageId, int type, String classId, String alias, String path, Integer template, Boolean removed) {
+        ProcedureCall call = sessionFactory.getCurrentSession().createStoredProcedureCall("public.\"addOrUpdatePage\"");
+        ParameterRegistration param;
+
+        param = call.registerParameter(0, Integer.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(pageId);
+        param = call.registerParameter(1, Integer.class, ParameterMode.IN);
+        param.enablePassingNulls(false);
+        param.bindValue(type);
+        param = call.registerParameter(2, String.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(classId);
+        param = call.registerParameter(3, String.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(alias);
+        param = call.registerParameter(4, String.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(path);
+        param = call.registerParameter(5, Integer.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(template);
+        param = call.registerParameter(6, Boolean.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(removed);
+        ResultSetOutput resultSetOutput = (ResultSetOutput)call.getOutputs().getCurrent();
+        Integer newPageId = (Integer) resultSetOutput.getSingleResult();
+        return newPageId.intValue();
+    }
+
+    public Integer deletePage(Integer pageId, Boolean remove) {
+        ProcedureCall call = sessionFactory.getCurrentSession().createStoredProcedureCall("public.\"removePage\"");
+        ParameterRegistration param;
+        param = call.registerParameter(0, Integer.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(pageId);
+        param = call.registerParameter(1, Boolean.class, ParameterMode.IN);
+        param.enablePassingNulls(false);
+        param.bindValue(remove);
+        Integer rowId = (Integer) ((ResultSetOutput)call.getOutputs().getCurrent()).getSingleResult();
+        return rowId;
+    }
+
+    public boolean deletePage(Page page) {
+        boolean result;
+        result = deletePage(page.getPageId(),  true) != null;
+        return result;
+    }
+
+    public boolean deletePage(int pageId) {
+        boolean result;
+        result = deletePage(pageId, true) != null;
+        return result;
+    }
+
+    public void updatePage(Page page) {
+        addPage(page.getPageId(), page.getType(), page.getClassId(), page.getAlias(), page.getPath(), page.getTemplate(), page.getRemoved());
+    }
+
+    public void updatePage(int pageId, int type, String classId, String alias, String path, Integer template, Boolean removed) {
+        addPage(pageId, type, classId, alias, path, template, removed);
+    }
+
+    public int addPageData(PageData data) {
+        int id = addPageData(null, data.getPageId(), data.getType(),
+                data.getIntValue(), data.getStringValue(), data.getTextValue(), data.getDoubleValue(), data.getDateValue(),
+                data.getParentId(), data.getRemoved());
+        data.setDataId(id);
+        return id;
+    }
+
+    public int addPageData(Integer dataId, int pageId, int type,
+                           Integer intValue, String strValue, String textValue, Double floatValue, Date dateValue,
+                           Integer parentId, Boolean removed) {
+        ProcedureCall call = sessionFactory.getCurrentSession().createStoredProcedureCall("public.\"addOrUpdatePage\"");
+        ParameterRegistration param;
+
+        param = call.registerParameter(0, Integer.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(dataId);
+        param = call.registerParameter(1, Integer.class, ParameterMode.IN);
+        param.enablePassingNulls(false);
+        param.bindValue(pageId);
+        param = call.registerParameter(2, Integer.class, ParameterMode.IN);
+        param.enablePassingNulls(false);
+        param.bindValue(type);
+
+        param = call.registerParameter(3, Integer.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(intValue);
+        param = call.registerParameter(4, String.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(strValue);
+        param = call.registerParameter(5, String.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(textValue);
+        param = call.registerParameter(6, Double.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(floatValue);
+        param = call.registerParameter(7, Timestamp.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(dateValue);
+
+        param = call.registerParameter(8, Integer.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(parentId);
+        param = call.registerParameter(9, Boolean.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(removed);
+
+
+        ResultSetOutput resultSetOutput = (ResultSetOutput)call.getOutputs().getCurrent();
+        Integer newPageId = (Integer) resultSetOutput.getSingleResult();
+        return newPageId.intValue();
+    }
+
+    public Integer deletePageData(Integer dataId, Boolean remove) {
+        ProcedureCall call = sessionFactory.getCurrentSession().createStoredProcedureCall("public.\"removePageData\"");
+        ParameterRegistration param;
+        param = call.registerParameter(0, Integer.class, ParameterMode.IN);
+        param.enablePassingNulls(true);
+        param.bindValue(dataId);
+        param = call.registerParameter(1, Boolean.class, ParameterMode.IN);
+        param.enablePassingNulls(false);
+        param.bindValue(remove);
+        Integer rowId = (Integer) ((ResultSetOutput)call.getOutputs().getCurrent()).getSingleResult();
+        return rowId;
+    }
+
+    public boolean deletePageData(PageData data) {
+        boolean result;
+        result = deletePageData(data.getId(),  true) != null;
+        return result;
+    }
+
+    public boolean deletePageData(int dataId) {
+        boolean result;
+        result = deletePageData(dataId, true) != null;
+        return result;
+    }
+
+    public void updatePageData(PageData data) {
+        addPageData(data.getDataId(), data.getPageId(), data.getType(),
+                data.getIntValue(), data.getStringValue(), data.getTextValue(), data.getDoubleValue(), data.getDateValue(),
+                data.getParentId(), data.getRemoved());
+    }
+
+    public void updatePageData(int dataId, int pageId, int type,
+                               Integer intValue, String strValue, String textValue, Double floatValue, Date dateValue,
+                               Integer parentId, Boolean removed) {
+        addPageData(dataId, pageId, type, intValue, strValue, textValue, floatValue, dateValue, parentId, removed);
+    }
+
+    private DataCache pagesByTypeCache;
+
+    public int getPagesOfTypeCount(int pageType) {
+        CachedData cached = pagesByTypeCache.get(pageType);
+        if (cached == null) {
+            NativeQuery query = sessionFactory.getCurrentSession().createNativeQuery(
+                    "SELECT count(d.id) " +
+                            "FROM public.\"LastPageData\" as pd " +
+                            "LEFT JOIN public.\"LastPage\" as p ON p.\"pageId\" = pd.\"pageId\" " +
+                            "WHERE p.\"type\" = ? and pd.\"type\" = ? and (pd.removed is null or pd.removed = false) and (p.removed is null or p.removed = false)");
+            query.setParameter(1, pageType).setParameter(2, Constants.PageData.CommonPageData.CREATION_INFO);
+            Integer result = (Integer) query.uniqueResult();
+            cached = pagesByTypeCache.create(result, pageType);
+        }
+
+        return (Integer)cached.getData();
+    }
+
+    public ArrayList<PageDom> listPagesOfTypeByCreateDate(int pageType, int count, int offset) {
+        ArrayList<PageDom> pages = null;
+        NativeQuery query = sessionFactory.getCurrentSession().createNativeQuery(
+                "SELECT p.id, p.\"pageId\", p.alias, p.path, p.\"classId\", p.template " +
+                "FROM public.\"LastPageData\" as pd LEFT JOIN public.\"LastPage\" as p ON p.\"pageId\" = pd.\"pageId\" "+
+                "WHERE p.\"type\" = ? and pd.\"type\" = ? and (pd.removed is null or pd.removed = false) and (p.removed is null or p.removed = false) "+
+                "ORDER BY pd.\"dateValue\" LIMIT ? OFFSET ?");
+            query.setParameter(1, pageType).setParameter(2, Constants.PageData.CommonPageData.CREATION_INFO).setParameter(3, count).setParameter(4, offset);
+        List<Object[]> result = query.list();
+        if(result != null) {
+            pages = new ArrayList<PageDom>();
+            for (Object[] data : result) {
+                Page page = new Page();
+                page.setType(pageType);
+                page.setId((Integer) data[0]);
+                page.setPageId((Integer) data[1]);
+                page.setAlias((String) data[2]);
+                page.setPath((String) data[3]);
+                page.setClassId((String) data[4]);
+                page.setTemplate((Integer) data[5]);
+
+                PageDom dom = new PageDom();
+                dom.setPage(page);
+                dom.setPageData(getPageDataForPage(page.getPageId()));
+
+                pages.add(dom);
+            }
+        }
+        return pages;
+    }
+
+    public Integer createPage(int pageType, User user, String alias, String path, Integer templateId) {
+        Integer pageId = addPage(null, pageType, null, alias, path, templateId, null);
+        if (pageId != null) {
+            Date date = Calendar.getInstance().getTime();
+            addPageData(null, pageId.intValue(), Constants.PageData.CommonPageData.CREATION_INFO, user.getId(), null, null, null, date, null, null);
+        }
+        return pageId;
+    }
 
 }

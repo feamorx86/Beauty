@@ -64,8 +64,6 @@ public class MainMenuManager extends BaseController {
     @Autowired
     private GroupDataDAO groupDataDAO;
     @Autowired
-    private PageDao pageDao;
-    @Autowired
     private ViewFactory viewFactory;
 
     /**

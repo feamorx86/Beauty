@@ -14,6 +14,7 @@ import com.feamor.beauty.templates.TemplateScanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.json.JsonParser;
+import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -166,7 +167,7 @@ public class SimpleTemplateEditor extends BaseControllerWithPage {
     private MenuData loadMenu() {
         MenuData menu = new MenuData();
         String json = siteDao.getStringOfType(Constants.GroupDataType.TEMPLATE_EDITOR_MENU_JSON);
-        JsonParser parser = new JacksonJsonParser();
+        JsonParser parser = JsonParserFactory.getJsonParser();
         Map<String, Object> menuJson= parser.parseMap(json);
         menu.title = (String) menuJson.get("title");
         ArrayList<Object> menuItems = (ArrayList<Object>) menuJson.get("items");
