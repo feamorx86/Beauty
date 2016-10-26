@@ -1,4 +1,4 @@
-package com.feamor.beauty.models;
+package com.feamor.beauty.models.views;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -218,11 +218,18 @@ public class Constants {
     public static class PageData {
 
         public static class News {
-            public static final int TITLE = 100;
-            public static final int SUMMARY = 101;
-            public static final int ICON = 102;
-            public static final int SUMMARY_BLOCK_ID = 103;
-            public static final int SUMMARY_ROOT = 110;
+            public static final int SUMMARY_BLOCK_ID = 15110;
+
+            public static final int SUMMARY_IMAGE_URL = 15112;
+            public static final int SUMMARY_TEXT = 15113;
+            public static final int SUMMARY_HTML = 15114;
+
+            public static final int SUMMARY_ROOT = 15111;
+            public static final int SUMMARY_TYPE_WITH_IMAGE = 15201;
+            public static final int SUMMARY_TYPE_WITH_TEXT = 15202;
+            public static final int SUMMARY_TYPE_COMPLEX = 15203;
+            public static final int SUMMARY_TYPE_WITH_HTML = 15204;
+
         }
 
         public static class CommonPageData {
@@ -230,15 +237,19 @@ public class Constants {
             public static final int CREATION_INFO = 205;
         }
 
-        public static class NewsSummaryType {
-            public static final int BASE = 0;
-            public static final int SummaryWithHtml = 1;
-            public static final int SummaryWithImage = 2;
-            public static final int SummaryWithText = 3;
-            public static final int ComplexSummary = 4;
-
+        public static class ContentView {
+            public static final int TEXT_VIEW =  20010;
+            public static final int IMAGE_VIEW =  20011;
+            public static final int TITLE_VIEW =  20012;
         }
 
+        public static class ContentData {
+            public static final int STYLE =  20009;
+            public static final int SIMPLE_TEXT =  30010;
+            public static final int IMAGE_URL =  30011;
+            public static final int TITLE =  30012;
+
+        }
     }
 
     public static class UserDataTypes {

@@ -33,6 +33,17 @@ public class PageDomBlock {
         return blockData;
     }
 
+    public PageBlockData findFirstDataWithType(int type) {
+        PageBlockData result = null;
+        for (PageBlockData data : blockData) {
+            if (data.getType() == type ) {
+                result = data;
+                break;
+            }
+        }
+        return result;
+    }
+
     public void setBlockData(List<PageBlockData> blockData) {
         this.blockData = blockData;
     }

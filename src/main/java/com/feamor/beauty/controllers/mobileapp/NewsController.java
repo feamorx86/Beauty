@@ -6,9 +6,11 @@ import com.feamor.beauty.dao.PageDao;
 import com.feamor.beauty.managers.Constants;
 import com.feamor.beauty.models.db.User;
 import com.feamor.beauty.models.ui.PageDom;
+import com.feamor.beauty.models.views.news.NewsPageData;
+import com.feamor.beauty.serialization.Serializer;
+import com.feamor.beauty.serialization.news.NewsPageSerializer;
 import com.feamor.beauty.views.BaseViewRender;
 import com.feamor.beauty.views.ViewFactory;
-import jdk.nashorn.internal.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +28,9 @@ import java.util.List;
 public class NewsController extends BaseController {
 
     public static int DEFAULT_SUMMARY_NEWS_COUNT = 10;
+
+    @Autowired
+    private NewsPageSerializer summaryNewsPageSerializer;
 
     @Override
     public int controllerId() {
@@ -133,7 +139,7 @@ public class NewsController extends BaseController {
         if (!checkUserAccessLevel(user, 0)) {
             sendProblem(render, request, response, ResultCode.ERROR_NOT_ALLOWED_FOR_USER, "0", "Access denied");
         } else {
-            JSONParser
+            summaryNewsPageSerializer
 
 
             Integer pageId = pageDao.createPage(type, user, "News", null, null);
@@ -148,7 +154,12 @@ public class NewsController extends BaseController {
         } else {
             int total = pageDao.getPagesOfTypeCount(Constants.Pages.NEWS_CREATED_BY_USER);
             List<PageDom> pages = pageDao.listPagesOfTypeByCreateDate(Constants.Pages.NEWS_CREATED_BY_USER, count, offset);
-            render.renderView(request, response, NewsRenderTypes.TYPE_SendLastSummary, this, pages, total, count, offset);
+            List<NewsPageData> news = new ArrayList<>();
+            for(PageDom dom : pages) {
+                NewsPageData item = (NewsPageData) summaryNewsPageSerializer.loadFrom(Serializer.DataTypes.PAGE_DOM, dom);
+                news.add(item);
+            }
+            render.renderView(request, response, NewsRenderTypes.TYPE_SendLastSummary, this, pages, news, total, count, offset);
         }
     }
 

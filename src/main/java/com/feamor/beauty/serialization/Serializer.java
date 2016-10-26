@@ -1,13 +1,9 @@
 package com.feamor.beauty.serialization;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.boot.json.JacksonJsonParser;
-import org.springframework.boot.json.JsonParser;
-import org.springframework.boot.json.JsonParserFactory;
+import com.feamor.beauty.models.ui.PageDom;
 
 import java.io.IOException;
 
@@ -21,6 +17,8 @@ public class Serializer {
         public static final int JSON = 11;
         public static final int STRING = 12;
         public static final int JSON_STRING = 13;
+        public static final int HTML = 14;
+        public static final int DOM = 15;
     }
 
     public Object loadFrom(int dataType, Object data, Object... args) {
@@ -41,11 +39,21 @@ public class Serializer {
             case DataTypes.Binary:
                 result = loadFromBinary(data, args);
                 break;
+            case DataTypes.HTML:
+                result = loadFromHtml(data, args);
+                break;
+            case DataTypes.DOM:
+                result = loadFromDom(data, args);
+                break;
             default:
                 result = null;
                 break;
         }
         return result;
+    }
+
+    protected Object loadFromDom(Object domData, Object... args) {
+        return null;
     }
 
     public Object saveTo(int dataType, Object value, Object ... args) {
@@ -65,7 +73,14 @@ public class Serializer {
                 result = saveToString(value, args);
                 break;
             case DataTypes.Binary:
-                saveToBinnary(value, args);
+                saveToBinary(value, args);
+                result = null;
+                break;
+            case DataTypes.HTML:
+                result = saveToHtml(value, args);
+                break;
+            case DataTypes.DOM:
+                saveToDom(value, args);
                 result = null;
                 break;
             default:
@@ -75,7 +90,16 @@ public class Serializer {
         return result;
     }
 
-    protected void saveToBinnary(Object value, Object ... args) {
+    protected Object saveToHtml(Object value, Object...args) {
+        return null;
+    }
+
+
+    protected void saveToDom(Object value, Object...args) {
+
+    }
+
+    protected void saveToBinary(Object value, Object ... args) {
 
     }
 
@@ -101,6 +125,10 @@ public class Serializer {
             result = null;
         }
         return result;
+    }
+
+    protected Object loadFromHtml(Object data, Object... args) {
+        return null;
     }
 
     protected Object loadFromBinary(Object data, Object... args) {
@@ -134,7 +162,7 @@ public class Serializer {
     protected int optInt(ObjectNode node, String field, int fallback) {
         JsonNode jn = node.get(field);
         if (jn != null && jn.isInt()) {
-            return jn.asInt();
+            return jn.intValue();
         } else {
             return fallback;
         }
@@ -143,7 +171,7 @@ public class Serializer {
     protected String optStr(ObjectNode node, String field, String fallback) {
         JsonNode jn = node.get(field);
         if (jn != null && jn.isTextual()) {
-            return jn.asText();
+            return jn.textValue();
         } else {
             return fallback;
         }

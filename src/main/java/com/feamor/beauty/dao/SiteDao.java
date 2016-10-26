@@ -1,21 +1,16 @@
 package com.feamor.beauty.dao;
 
 import com.feamor.beauty.managers.Constants;
-import com.feamor.beauty.models.NewsData;
+import com.feamor.beauty.models.views.NewsData;
 import com.feamor.beauty.models.db.Page;
 import com.feamor.beauty.models.db.PageData;
 import com.feamor.beauty.models.ui.PageDomBlock;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.NativeQuery;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;

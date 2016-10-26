@@ -2,7 +2,7 @@ package com.feamor.beauty.controllers;
 
 import com.feamor.beauty.dao.SiteDao;
 import com.feamor.beauty.managers.Constants;
-import com.feamor.beauty.models.NewsData;
+import com.feamor.beauty.models.views.NewsData;
 import com.feamor.beauty.models.db.Page;
 import com.feamor.beauty.models.db.User;
 import com.feamor.beauty.templates.Render;

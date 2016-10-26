@@ -18,6 +18,11 @@ import com.feamor.beauty.managers.RequestManager;
 import com.feamor.beauty.models.db.*;
 import com.feamor.beauty.pages.BasePageControl;
 import com.feamor.beauty.pages.PageWithTemplateControl;
+import com.feamor.beauty.serialization.content.ImageViewSerializer;
+import com.feamor.beauty.serialization.content.TextViewSerializer;
+import com.feamor.beauty.serialization.content.TitleViewSerializer;
+import com.feamor.beauty.serialization.news.NewsSummarySerializer;
+import com.feamor.beauty.serialization.news.NewsPageSerializer;
 import com.feamor.beauty.views.mobileapp.AppStartDataJsonView;
 import com.feamor.beauty.views.ViewFactory;
 import com.feamor.beauty.views.mobileapp.MainMenuManagerJsonView;
@@ -36,6 +41,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import javax.inject.Named;
 import javax.sql.DataSource;
 import java.io.File;
 
@@ -341,6 +347,37 @@ public class Config extends WebMvcConfigurerAdapter {
     public MainMenuManagerJsonView mainMenuManagerJsonView() {
         return new MainMenuManagerJsonView();
     }
+
+
+    //------------------------------------------------
+    //  Serializers
+    @Bean
+    public NewsSummarySerializer newsSummarySerializer() {
+        return newsSummarySerializer();
+    }
+
+    @Bean
+    public NewsPageSerializer simpleSummaryNewsPageSerializer() {
+        return new NewsPageSerializer();
+    }
+
+    //------------------------------------------------
+    //  View model Serializers
+    @Bean
+    public TextViewSerializer textViewSerializer() {
+        return new TextViewSerializer();
+    }
+
+    @Bean
+    public ImageViewSerializer imageViewSerializer() {
+        return new ImageViewSerializer();
+    }
+
+    @Bean
+    public TitleViewSerializer titleViewSerializer() {
+        return new TitleViewSerializer();
+    }
+
 
 //    @Bean
 //    public () {return new ();}

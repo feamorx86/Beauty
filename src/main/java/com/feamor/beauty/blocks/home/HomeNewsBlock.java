@@ -2,11 +2,9 @@ package com.feamor.beauty.blocks.home;
 
 import com.feamor.beauty.blocks.BaseBlockControl;
 import com.feamor.beauty.dao.SiteDao;
-import com.feamor.beauty.dao.Texts;
 import com.feamor.beauty.managers.Constants;
 import com.feamor.beauty.managers.ControlsManager;
-import com.feamor.beauty.models.NewsData;
-import com.feamor.beauty.models.ui.MenuItem;
+import com.feamor.beauty.models.views.NewsData;
 import com.feamor.beauty.templates.BlockWithDependence;
 import com.feamor.beauty.templates.Render;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.HtmlUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -49,6 +49,15 @@ public class PageDom {
         return -1;
     }
 
+    public PageData findFirstWithTypeAndParent(int type, int parent){
+        for (PageData data : pageData) {
+            if (data.getParentId() == parent &&data.getType() == type) {
+                return data;
+            }
+        }
+        return null;
+    }
+
     public PageData findFirstDataWithType(int type){
         for (int i = 0; i<pageData.size(); i++) {
             if (pageData.get(i).getType() == type ) {
